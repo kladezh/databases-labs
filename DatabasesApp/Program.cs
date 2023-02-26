@@ -11,6 +11,7 @@ using DatabasesApp.Models;
 using DatabasesApp.Views;
 using DatabasesApp.Application.Interfaces;
 using DatabasesApp.Application.Config.SqlQueries;
+using DatabasesApp.Application.Mapping;
 using DatabasesApp.Data;
 using DatabasesApp.Data.Mapping;
 using DatabasesApp.Services;
