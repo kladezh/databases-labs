@@ -1,13 +1,16 @@
-﻿namespace DatabasesApp.Models
-{
-	public class CashRegister
-	{
-		public int? Id { get; set; }
-		public string? Code { get; set; }
+﻿using DatabasesApp.Application.Attributes;
+using System.Collections.Generic;
 
-		public override string ToString()
-		{
-			return $"Id: {Id} Code: {Code}";
-		}
+namespace DatabasesApp.Models
+{
+	public class Cashregister
+	{
+		[Column("cashregister_id")]
+		public int Id { get; set; }
+
+		[Column("cashregister_code")]
+		public string Code { get; set; } = string.Empty;
+
+		public List<Receipt>? Receipts { get; set; }
 	}
 }
