@@ -13,6 +13,7 @@ using DatabasesApp.Application.Interfaces;
 using DatabasesApp.Application.Config.SqlQueries;
 using DatabasesApp.Data;
 using DatabasesApp.Data.Mapping;
+using DatabasesApp.Services;
 
 
 namespace DatabasesApp
@@ -41,25 +42,14 @@ namespace DatabasesApp
 				var conn = ConfigurationManager.ConnectionStrings["MySQL"];
 				DbProviderFactories.RegisterFactory(conn.ProviderName, MySqlConnectorFactory.Instance);
 
-				var dbConnectionManager = new DbConnectionManager(
-					DbProviderFactories.GetFactory(conn.ProviderName), conn.ConnectionString);
-
-				services.AddSingleton<IDbConnectionManager>(dbConnectionManager);
+				services.AddSingleton<IDbConnectionManager>(new DbConnectionManager(
+					DbProviderFactories.GetFactory(conn.ProviderName), conn.ConnectionString));
 
 				// DbContext
 				var section = (SqlQueriesSection)ConfigurationManager.GetSection("sqlQueries");
 
-				services.AddSingleton(sp => new DbContext
-				{
-					Cashregisters   = new DbRepository<Cashregister>  (dbConnectionManager, section.TableQueries("cashregister")),
-					Products        = new DbRepository<Product>       (dbConnectionManager, section.TableQueries("product")),
-					ProductTypes    = new DbRepository<ProductType>   (dbConnectionManager, section.TableQueries("product_type")),
-					ProductUnits    = new DbRepository<ProductUnit>   (dbConnectionManager, section.TableQueries("product_unit")),
-					Receipts        = new DbRepository<Receipt>       (dbConnectionManager, section.TableQueries("receipt")),
-					UserRights      = new DbRepository<UserRight>     (dbConnectionManager, section.TableQueries("user_right")),
-					WorkerPositions = new DbRepository<WorkerPosition>(dbConnectionManager, section.TableQueries("worker_position")),
-					Workers         = new DbRepository<Worker>        (dbConnectionManager, section.TableQueries("worker")),
-				});
+				services.AddSingleton(sp => new DbContext(
+					sp.GetRequiredService<IDbConnectionManager>(), section));
 			});
 	}
 }
